@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+//import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+//import "@openzeppelin/contracts/access/Ownable.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC1155/ERC1155.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
 
 contract Merging is ERC1155, Ownable {
 
@@ -46,10 +48,11 @@ contract Merging is ERC1155, Ownable {
     function merge(uint256 tokenId1, uint256 tokenId2) public {
         Dot memory dot1 = _dotDetails[tokenId1];
         Dot memory dot2 = _dotDetails[tokenId2];
-        require(balanceOf(msg.sender, tokenId1) < 1, "first token is not yours");
-        require(balanceOf(msg.sender, tokenId2) < 1, "second token is not yours");
+        require(balanceOf(msg.sender, tokenId1) >= 1, "first token is not yours");
+        require(balanceOf(msg.sender, tokenId2) >= 1, "second token is not yours");
         require(dot1.level == dot2.level, "Cannot merge two dots with different levels");
         require(compareStrings(dot1.color, dot2.color), "Cannot merge two dots with different colors");
+        _dotDetails[_nextId] = Dot(dot1.color, dot1.level+1);
         _mint(msg.sender, _nextId, 1, "");
         _nextId++;
         _burn(msg.sender, tokenId1, 1);
